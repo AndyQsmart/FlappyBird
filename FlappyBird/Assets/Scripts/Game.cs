@@ -8,6 +8,7 @@ public class Game : MonoBehaviour
     private static bool isrunning = false;
     private static bool isInit = true;
     private static int score = 0;
+    private static bool is_loged = false;
 
 	// Use this for initialization
 	void Start ()
@@ -33,6 +34,14 @@ public class Game : MonoBehaviour
         isrunning = true;
         isInit = false;
         score = 0;
+        if (!is_loged)
+        {
+            string username = "";
+            username = GameObject.Find("UI Root/StartPage/UserName/InputLabel").GetComponent<UILabel>().text;
+            GameObject.Find("UI Root/StartPage/UserName").SetActive(false);
+            Network.sendUser(username);
+            is_loged = true;
+        }
         GameObject.Find("UI Root/StartPage").SetActive(false);
         GameObject objects = GameObject.Find("UI Root");
         objects.transform.Find("ScoreLabel").gameObject.SetActive(true);
@@ -75,10 +84,13 @@ public class Game : MonoBehaviour
         {
         }
 
+        Network.sendScore(score);
+
         //bestscore
         int bestscore = 0;
-        bestscore = PlayerPrefs.GetInt("BestScore");
-        bestscore = bestscore > score ? bestscore : score;
+        bestscore = Network.getScore();
+        //bestscore = PlayerPrefs.GetInt("BestScore");
+        //bestscore = bestscore > score ? bestscore : score;
         PlayerPrefs.SetInt("BestScore", bestscore);
         page.transform.Find("Info/ScoreBoard/BestScore"
             ).gameObject.GetComponent<UILabel>().text = bestscore.ToString();

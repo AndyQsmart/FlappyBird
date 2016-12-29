@@ -51,7 +51,18 @@ public class FlyBird : MonoBehaviour
         audioSource.Play();
     }
 
+    public void TryHit()
+    {
+        Object birdObj = Resources.Load("Prefabs/HitBird");
+        GameObject obj = GameObject.Instantiate(birdObj) as GameObject;
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
+    {
+        GameOver();
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
     {
         GameOver();
     }
