@@ -6,6 +6,7 @@ public class Floor : MonoBehaviour
 {
     private static float maxX = 3.83f;
     private static float speed = 0.03f;
+
     // Use this for initialization
     void Start ()
     {

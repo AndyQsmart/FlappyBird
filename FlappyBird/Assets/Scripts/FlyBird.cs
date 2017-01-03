@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class FlyBird : MonoBehaviour
 {
-    private float maxY = 2.85f;
-    private float minY = -2.24f;
+    private static float speed = 0.03f;
+
+    Game game = null;
+    
     public AudioClip jumpAudio;
     public AudioClip hitAudio;
     private AudioSource audioSource;
+
+    private float nowx;
+    private float nowy;
+
     // Use this for initialization
     void Start ()
     {
+        game = GameObject.Find("Game").GetComponent<Game>();
         audioSource = this.GetComponent<AudioSource>();
+        nowx = nowy = 0;
     }
 	
 	// Update is called once per frame
@@ -23,46 +31,50 @@ public class FlyBird : MonoBehaviour
             this.transform.position = new Vector3(0, 0, 3);
             this.GetComponent<Rigidbody2D>().rotation = 0;
             this.GetComponent<Rigidbody2D>().angularVelocity = 0;
-        }
-        if (this.transform.position.y >= maxY || this.transform.position.y <= minY)
-        {
-            GameOver();
+            nowx = nowy = 0;
         }
         if (!Game.isRunning())
         {
             this.GetComponent<Rigidbody2D>().gravityScale = 0;
             this.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+            nowx = nowy = 0;
         }
         else
         {
+            nowy = this.transform.position.y;
             this.GetComponent<Rigidbody2D>().gravityScale = 0.5f;
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
             {
                 TryFly();
             }
         }
 	}
 
+    void FixedUpdate()
+    {
+        if (!Game.isRunning()) return;
+        nowx += speed;
+    }
+
+    public float getX()
+    {
+        return nowx;
+    }
+
+    public float getY()
+    {
+        return nowy;
+    }
+
     public void TryFly()
     {
-        Debug.Log("Bird fly");
+        //Debug.Log("Bird fly");
         this.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 2.5f, 0);
         audioSource.clip = jumpAudio;
         audioSource.Play();
     }
 
-    public void TryHit()
-    {
-        Object birdObj = Resources.Load("Prefabs/HitBird");
-        GameObject obj = GameObject.Instantiate(birdObj) as GameObject;
-    }
-
     void OnCollisionEnter2D(Collision2D collision)
-    {
-        GameOver();
-    }
-
-    void OnTriggerEnter2D(Collider2D collider)
     {
         GameOver();
     }
@@ -71,7 +83,7 @@ public class FlyBird : MonoBehaviour
     {
         if (!Game.isRunning()) return;
         Debug.Log("INFO:Game over");
-        Game.stopRunning();
+        game.stopRunning();
         audioSource.clip = hitAudio;
         audioSource.Play();
     }

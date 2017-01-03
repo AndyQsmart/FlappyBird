@@ -7,6 +7,7 @@ public class Pipe : MonoBehaviour
 	private static float maxX = 2.245f;
 	private static float speed = 0.03f;
     private bool isPassed = false;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -29,7 +30,7 @@ public class Pipe : MonoBehaviour
         {
             Game.addScore();
             isPassed = true;
-            Debug.Log("INFO:Score: "+Game.getScore());
+            //Debug.Log("INFO:Score: "+Game.getScore());
         }
 	}
 
